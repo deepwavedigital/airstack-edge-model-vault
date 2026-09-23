@@ -1,0 +1,46 @@
+name: "audio_batcher"
+backend: "python"
+max_batch_size: 0
+
+input [
+  {
+    name: "AUDIO_IN"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  },
+  {
+    name: "FLUSH"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "AUDIO_OUT"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }
+]
+
+parameters [
+  {
+    key: "sample_rate"
+    value: { string_value: "16000" }
+  },
+  {
+    key: "chunk_seconds"
+    value: { string_value: "10.0" }
+  },
+  {
+    key: "overlap_seconds"
+    value: { string_value: "2.0" }
+  },
+  {
+    key: "max_buffer_seconds"
+    value: { string_value: "60.0" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

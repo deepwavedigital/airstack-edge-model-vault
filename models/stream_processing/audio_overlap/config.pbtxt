@@ -1,0 +1,38 @@
+name: "audio_overlap"
+backend: "python"
+max_batch_size: 0
+
+input [
+  {
+    name: "AUDIO_IN"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  },
+  {
+    name: "RESET"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "AUDIO_OUT"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }
+]
+
+parameters [
+  {
+    key: "sample_rate"
+    value: { string_value: "16000" }
+  },
+  {
+    key: "overlap_seconds"
+    value: { string_value: "2.0" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

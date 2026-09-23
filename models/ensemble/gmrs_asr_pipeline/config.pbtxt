@@ -1,0 +1,121 @@
+name: "gmrs_asr_pipeline"
+platform: "ensemble"
+model_transaction_policy { decoupled: true }
+input [
+  {
+    name: "INPUT"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  },
+  {
+    name: "METADATA"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "RESET"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "FLUSH"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  }
+]
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+ensemble_scheduling {
+  step [
+    {
+      model_name: "fm_gmrs_demod"
+      model_version: -1
+      input_map [{
+        key: "IQ_IN"
+        value: "INPUT"
+      },{
+        key: "META_IN"
+        value: "METADATA"
+      }]
+      output_map [{
+        key: "AUDIO_OUT"
+        value: "audio_data"
+      },{
+        key: "META_OUT"
+        value: "metadata"
+      }]
+    },
+    {
+      model_name: "audio_overlap"
+      model_version: -1
+      input_map [{
+        key: "AUDIO_IN"
+        value: "audio_data"
+      },{
+        key: "RESET"
+        value: "RESET"
+      }]
+      output_map [{
+        key: "AUDIO_OUT"
+        value: "overlapped_audio"
+      }]
+    },
+    {
+      model_name: "voxtral-mini-stt"
+      model_version: -1
+      input_map [{
+        key: "AUDIO_IN"
+        value: "overlapped_audio"
+      }]
+      output_map [{
+        key: "TEXT_OUT"
+        value: "raw_transcript"
+      }]
+    },
+    {
+      model_name: "transcript_stitcher"
+      model_version: -1
+      input_map [{
+        key: "TEXT_IN"
+        value: "raw_transcript"
+      },{
+        key: "RESET"
+        value: "RESET"
+      }]
+      output_map [{
+        key: "TEXT_OUT"
+        value: "stitched_transcript"
+      }]
+    },
+    {
+      model_name: "fm_document_batcher"
+      model_version: -1
+      input_map [{
+        key: "TEXT_IN"
+        value: "stitched_transcript"
+      },{
+        key: "METADATA_IN"
+        value: "metadata"
+      },{
+        key: "FLUSH"
+        value: "FLUSH"
+      },{
+        key: "RESET"
+        value: "RESET"
+      }]
+      output_map [{
+        key: "OUTPUT"
+        value: "OUTPUT"
+      }]
+    }
+  ]
+}
+max_batch_size: 0

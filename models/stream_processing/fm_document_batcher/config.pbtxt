@@ -1,0 +1,59 @@
+name: "fm_document_batcher"
+backend: "python"
+max_batch_size: 0
+model_transaction_policy { decoupled: true }
+
+input [
+  {
+    name: "TEXT_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  },
+  {
+    name: "METADATA_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "FLUSH"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "RESET"
+    data_type: TYPE_BOOL
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+
+parameters [
+  {
+    key: "min_chars_per_batch"
+    value: { string_value: "400" }
+  },
+  {
+    key: "max_chars_per_batch"
+    value: { string_value: "2000" }
+  },
+  {
+    key: "stream_prefix"
+    value: { string_value: "fm" }
+  },
+  {
+    key: "stream_id"
+    value: { string_value: "" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

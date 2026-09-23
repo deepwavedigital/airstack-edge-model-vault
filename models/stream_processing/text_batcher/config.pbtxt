@@ -1,0 +1,38 @@
+name: "text_batcher"
+backend: "python"
+max_batch_size: 0
+
+input [
+  {
+    name: "TEXT_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  },
+  {
+    name: "METADATA_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+
+parameters [
+  {
+    key: "min_chars_per_batch"
+    value: { string_value: "0" }
+  },
+  {
+    key: "max_chars_per_batch"
+    value: { string_value: "0" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

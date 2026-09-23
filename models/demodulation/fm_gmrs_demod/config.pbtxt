@@ -1,0 +1,69 @@
+name: "fm_gmrs_demod"
+backend: "python"
+input [
+  {
+    name: "IQ_IN"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }, {
+    name: "META_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+    optional: true
+  }
+]
+output [
+  {
+    name: "AUDIO_OUT"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  },   {
+    name: "META_OUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+parameters [
+  {
+    key: "sample_rate"
+    value: { string_value: "1920000" }
+  },
+  {
+    key: "audio_rate"
+    value: { string_value: "16000" }
+  },
+  {
+    key: "dec1"
+    value: { string_value: "20" }
+  },
+  {
+    key: "dec2"
+    value: { string_value: "6" }
+  },
+  {
+    key: "lpf_cutoff"
+    value: { string_value: "6000" }
+  },
+  {
+    key: "lpf_transition"
+    value: { string_value: "2000" }
+  },
+  {
+    key: "squelch_db"
+    value: { string_value: "-75" }
+  },
+  {
+    key: "squelch_alpha"
+    value: { string_value: ".01" }
+  },
+  {
+    key: "max_dev"
+    value: { string_value: "5000" }
+  },
+  {
+    key: "deemph_us"
+    value: { string_value: "750" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]

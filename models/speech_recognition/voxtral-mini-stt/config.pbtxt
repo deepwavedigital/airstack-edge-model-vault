@@ -1,0 +1,64 @@
+name: "voxtral-mini-stt"
+backend: "python"
+
+input [
+  {
+    name: "AUDIO_IN"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }
+]
+
+output [
+  {
+    name: "TEXT_OUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+
+parameters [
+  { 
+    key: "EXECUTION_ENV_PATH"
+    value: { string_value: "$$TRITON_MODEL_DIRECTORY/voxtral-conda-env.tar.gz" }
+  },
+  {
+    key: "device"
+    value: { string_value: "cuda" }
+  },
+  {
+    key: "max_tokens"
+    value: { string_value: "256" }
+  },
+  {
+    key: "compile"
+    value: { string_value: "false" }
+  },
+  {
+    key: "input_sample_rate"
+    value: { string_value: "16000" }
+  },
+  {
+    key: "max_audio_seconds"
+    value: { string_value: "30.0" }
+  },
+  {
+    key: "warmup"
+    value: { string_value: "true" }
+  },
+  {
+    key: "warmup_seconds"
+    value: { string_value: "1.0" }
+  },
+  {
+    key: "page_cache_policy"
+    value: { string_value: "startup" }
+  },
+  {
+    key: "upstream_verbose"
+    value: { string_value: "false" }
+  }
+]
+
+max_batch_size: 0
+instance_group [{ kind: KIND_CPU count: 1 }]

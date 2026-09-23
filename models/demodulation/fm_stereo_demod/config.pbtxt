@@ -1,0 +1,41 @@
+name: "fm_stereo_demod"
+backend: "python"
+input [
+  {
+    name: "IQ_IN"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }, {
+    name: "META_IN"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+    optional: true
+  }
+]
+output [
+  {
+    name: "AUDIO_OUT"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  },   {
+    name: "META_OUT"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+parameters [
+  {
+    key: "sample_rate"
+    value: { string_value: "1920000" }
+  },
+  {
+    key: "audio_rate"
+    value: { string_value: "16000" }
+  },
+  {
+    key: "demod_rate"
+    value: { string_value: "192000" }
+  }
+]
+
+instance_group [{ kind: KIND_CPU }]
